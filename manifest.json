@@ -4,7 +4,7 @@
   "description": "Fly through nature, collect leaves, upgrade abilities, and fight bosses!",
   "start_url": "./leaf_journey.html",
   "display": "standalone",
-  "orientation": "landscape",
+  "orientation": "portrait",
   "background_color": "#111111",
   "theme_color": "#ff9966",
   "icons": [
