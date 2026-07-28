@@ -342,6 +342,22 @@
     <!-- Load External Music Scripts -->
     <script src="menu_sound.js"></script>
     <script src="air_sound.js"></script>
+
+        <!-- Link Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff9966">
+
+    <!-- Register Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW Registered!', reg))
+            .catch(err => console.log('SW Failed!', err));
+        });
+      }
+    </script>
+    
 </head>
 <body>
 
