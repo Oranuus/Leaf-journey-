@@ -2,7 +2,7 @@
   "name": "Leaf Journey: Boss Edition",
   "short_name": "Leaf Journey",
   "description": "Fly through nature, collect leaves, upgrade abilities, and fight bosses!",
-  "start_url": "./leaf journey.html",
+  "start_url": "./leaf_journey.html",
   "display": "standalone",
   "orientation": "landscape",
   "background_color": "#111111",
