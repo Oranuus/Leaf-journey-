@@ -1,7 +1,7 @@
 const CACHE_NAME = 'leaf-journey-v1';
 const ASSETS_TO_CACHE = [
   './',
-  './leaf journey.html',
+  './leaf_journey.html',
   './manifest.json',
   './orange leaf.png',
   './green leaf.png',
@@ -60,7 +60,7 @@ self.addEventListener('fetch', (event) => {
         });
         return networkResponse;
       }).catch(() => {
-        return caches.match('./leaf journey.html');
+        return caches.match('./leaf_journey.html');
       });
     })
   );
