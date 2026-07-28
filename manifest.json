@@ -9,8 +9,14 @@
   "theme_color": "#ff9966",
   "icons": [
     {
-      "src": "orange leaf.png",
-      "sizes": "192x192 512x512",
+      "src": "./orange leaf.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./orange leaf.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
