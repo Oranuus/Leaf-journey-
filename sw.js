@@ -9,7 +9,7 @@ const ASSETS_TO_CACHE = [
   './bird.png',
   './fork.png',
   './airship.png',
-  './Trade.png',
+  './trade.png',
   './daily bubble.ttf',
   './menu_sound.js',
   './air_sound.js'
