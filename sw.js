@@ -1,4 +1,4 @@
-const CACHE_NAME = 'leaf-journey-v1';
+const CACHE_NAME = 'leaf-journey-v2';
 const ASSETS_TO_CACHE = [
   './',
   './leaf_journey.html',
