@@ -1,7 +1,8 @@
-const CACHE_NAME = 'leaf-journey-v2';
+const CACHE_NAME = 'leaf-journey-v4';
 const ASSETS_TO_CACHE = [
   './',
   './leaf_journey.html',
+  './leaf_journey.html?v=2',
   './manifest.json',
   './orange leaf.png',
   './green leaf.png',
@@ -10,6 +11,8 @@ const ASSETS_TO_CACHE = [
   './fork.png',
   './airship.png',
   './trade.png',
+  './tornado.png',
+  './net.png',
   './daily bubble.ttf',
   './menu_sound.js',
   './air_sound.js'
