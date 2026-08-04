@@ -1,4 +1,4 @@
-const CACHE_NAME = 'leaf-journey-cache';
+const CACHE_NAME = 'leaf-journey-cache-v2'; // تم تحديث الـ Version لإجبار المتصفح على قراءة الكود الجديد
 const STATIC_ASSETS = [
   './',
   './leaf_journey.html',
@@ -21,7 +21,7 @@ const STATIC_ASSETS = [
   './air_sound.js'
 ];
 
-// تثبيت الكاش لأول مرة
+// تثبيت الكاش والمسح التلقائي للقديم
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
@@ -30,10 +30,19 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key); // حذف الكاش القديم فوراً
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
-// استراتيجية التحديث التلقائي الذكية (Network First للأكواد)
 self.addEventListener('fetch', (event) => {
   const reqUrl = new URL(event.request.url);
 
