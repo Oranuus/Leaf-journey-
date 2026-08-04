@@ -1,8 +1,9 @@
-const CACHE_NAME = 'leaf-journey-v6';
-const ASSETS_TO_CACHE = [
+const CACHE_NAME = 'leaf-journey-cache';
+const STATIC_ASSETS = [
   './',
   './leaf_journey.html',
-  './leaf_journey.html?v=2',
+  './style.css',
+  './game.js',
   './manifest.json',
   './orange leaf.png',
   './green leaf.png',
@@ -18,53 +19,45 @@ const ASSETS_TO_CACHE = [
   './air_sound.js'
 ];
 
-// تثبيت الـ Service Worker وتخزين الملفات
+// تثبيت الكاش لأول مرة
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
-        console.warn('Some assets could not be cached automatically:', err);
-      });
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
 
-// تفعيل وتحديث الكاش القديم
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
-  self.clients.claim();
+  event.waitUntil(self.clients.claim());
 });
 
-// استدعاء الملفات من الكاش أولاً (Offline First)
+// استراتيجية التحديث التلقائي الذكية (Network First للأكواد / Cache First للصور)
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
+  const reqUrl = new URL(event.request.url);
+
+  // إذا كان الطلب لكود اللعبة (HTML / JS / CSS): جلب الأحدث من الشبكة وتحديث الكاش تلقائياً
+  if (reqUrl.pathname.endsWith('.html') || reqUrl.pathname.endsWith('.js') || reqUrl.pathname.endsWith('.css') || event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
         }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
         return networkResponse;
-      }).catch(() => {
-        return caches.match('./leaf_journey.html');
-      });
-    })
-  );
+      }).catch(() => caches.match(event.request)) // إذا كان أوفلاين استخرج المخزن
+    );
+  } else {
+    // للصور والأصوات والخطوط: الاستخراج من الكاش أولاً
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        return cachedResponse || fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+          }
+          return networkResponse;
+        });
+      })
+    );
+  }
 });
