@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, screen-orientation=portrait">
+    <title>Leaf Journey: Boss Edition</title>
+    
+    <!-- Link CSS & Manifest -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff9966">
+
+    <!-- Load Music Scripts -->
+    <script src="menu_sound.js"></script>
+    <script src="air_sound.js"></script>
+</head>
+<body>
+
+<!-- ORIENTATION WARNING OVERLAY -->
+<div id="orientationWarning">
+    <div>📱</div>
+    <p>Please rotate your phone to Vertical (Portrait) mode to play!</p>
+</div>
+
+<div id="gameWrapper">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- PAUSE BUTTON -->
+    <div id="pauseBtnContainer" class="hidden">
+        <button class="pause-icon-btn" onclick="window.gameManager.togglePause()">||</button>
+    </div>
+
+    <!-- MAIN HUD -->
+    <div id="hud" class="ui-layer hidden">
+        <div class="hud-group">
+            <div class="hud-text color-leaf">Leaves: <span id="scoreVal">0</span></div>
+            <div id="shieldHud" class="shield-indicator">SHIELD ACTIVE</div>
+        </div>
+        <div class="hud-group" style="align-items: flex-end; margin-right: 40px;"> 
+            <div class="hud-text color-dist"><span id="distVal">0.00</span> km</div>
+            <div id="envHud" style="font-size: 14px; color: #ffcc00; text-shadow: 1px 1px 2px #000; margin-top: 4px;">Env Progress</div>
+        </div>
+    </div>
+
+    <!-- BOSS HUD -->
+    <div id="bossHud">
+        <div class="boss-bar-container">
+            <div id="bossHealthFill"></div>
+        </div>
+        <div id="bossTimer">02:00</div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div id="mainMenu" class="ui-layer interactive">
+        <div class="menu-box">
+            <h1 class="game-title">Leaf<br>Journey</h1>
+            <div class="currency-display">Total Leaves: <span id="menuTotalLeaves">0</span></div>
+            <div id="menuEnvInfo" style="font-size: 1.1rem; color: #ff9966; margin-bottom: 15px; font-weight: bold;">Current Realm</div>
+            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+                <button onclick="window.gameManager.startGame()">Start Journey</button>
+                <button class="secondary" onclick="window.gameManager.openUpgrades()">Upgrades</button>
+                <button class="secondary" onclick="window.gameManager.openOptions()">Options</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OPTIONS MENU -->
+    <div id="optionsMenu" class="ui-layer interactive hidden">
+        <div class="menu-box">
+            <h2>Options</h2>
+            <button class="option-toggle secondary" onclick="window.gameManager.toggleMenuMusic()" style="margin-top:0;">
+                <span>Menu Music</span>
+                <span id="txtMenuMute" class="toggle-status">ON</span>
+            </button>
+            <button class="option-toggle secondary" onclick="window.gameManager.toggleAirMusic()" style="margin-top:0;">
+                <span>Air Music</span>
+                <span id="txtAirMute" class="toggle-status">ON</span>
+            </button>
+            <button class="danger-btn" onclick="window.gameManager.resetData()">Reset Data</button>
+            <button onclick="window.gameManager.closeOptions()" style="margin-top:20px;">Back</button>
+        </div>
+    </div>
+
+    <!-- PAUSE MENU -->
+    <div id="pauseMenu" class="ui-layer interactive hidden">
+        <div class="menu-box">
+            <h1 style="font-size: 3rem; margin-bottom: 30px;">Paused</h1>
+            <div style="display:flex; flex-direction:column; gap:15px; align-items:center;">
+                <button onclick="window.gameManager.togglePause()">Resume</button>
+                <button class="secondary" onclick="window.gameManager.toMainMenu()">Quit to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="upgradeMenu" class="ui-layer interactive hidden">
+        <div class="menu-box">
+            <h2>Power Ups</h2>
+            <div class="currency-display">Balance: <span id="shopTotalLeaves">0</span></div>
+            <div class="upgrade-grid"></div>
+            <button class="secondary" onclick="window.gameManager.closeUpgrades()">Back</button>
+        </div>
+    </div>
+
+    <div id="airshipMenu" class="ui-layer interactive hidden">
+        <div class="menu-box" style="border-color: #4facfe; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3);">
+            <h1 style="color: #4facfe; font-size: 2.5rem;">The Merchant</h1>
+            <p style="font-size: 1.2rem; color: #ddd; margin-bottom: 20px;">An airship offers you sanctuary.</p>
+            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+                <button class="airship-btn" onclick="window.gameManager.enterAirship()">Enter</button>
+                <button class="secondary" onclick="window.gameManager.leaveAirship()">Continue Journey</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tradeMenu" class="ui-layer hidden">
+        <div class="currency-display" style="margin-bottom: 40px; pointer-events:auto;">Current Run Leaves: <span id="tradeLeaves">0</span></div>
+        <div class="trade-grid">
+            <div class="trade-item" onclick="window.gameManager.buyTradeItem('fork', 10)">
+                <div class="trade-icon">🍴</div>
+                <div class="trade-name">Hire Fork</div>
+                <div class="trade-cost">10 🍃</div>
+            </div>
+            <div class="trade-item" onclick="window.gameManager.buyTradeItem('shield', 15)">
+                <div class="trade-icon">🛡️</div>
+                <div class="trade-name">Repair Shield</div>
+                <div class="trade-cost">15 🍃</div>
+            </div>
+            <div class="trade-item" style="opacity: 0.5; cursor: default;">
+                <div class="trade-icon">🔒</div>
+                <div class="trade-name">Sold Out</div>
+            </div>
+            <div class="trade-item" style="opacity: 0.5; cursor: default;">
+                <div class="trade-icon">🔒</div>
+                <div class="trade-name">Sold Out</div>
+            </div>
+        </div>
+        <div style="width: 100%; display: flex; justify-content: center; pointer-events: auto;">
+            <button class="secondary" onclick="window.gameManager.leaveAirship()">Exit Shop</button>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="ui-layer interactive hidden">
+        <div class="menu-box">
+            <h1 style="color: var(--danger)">Cut Down!</h1>
+            <p style="font-size: 1.2rem;">Distance: <span id="finalDist" style="color:#4facfe">0</span> km</p>
+            <p style="font-size: 1.2rem;">Collected: <span id="finalScore" style="color:var(--secondary)">0</span></p>
+            <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+                <button onclick="window.gameManager.startGame()">Fly Again</button>
+                <button class="secondary" onclick="window.gameManager.toMainMenu()">Main Menu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Environment Module First, Then Main Game Engine -->
+<script src="environments.js"></script>
+<script src="game.js"></script>
+
+</body>
+</html>
