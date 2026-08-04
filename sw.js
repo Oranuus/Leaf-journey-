@@ -1,10 +1,10 @@
-const CACHE_NAME = 'leaf-journey-cache-v2'; // تم تحديث الـ Version لإجبار المتصفح على قراءة الكود الجديد
+ const CACHE_NAME = 'leaf-journey-cache-v3'; // رفع الإصدار إلى v3
 const STATIC_ASSETS = [
   './',
   './leaf_journey.html',
-  './style.css',
-  './environments.js',
-  './game.js',
+  './style.css?v=3',
+  './environments.js?v=3',
+  './game.js?v=3',
   './manifest.json',
   './orange leaf.png',
   './green leaf.png',
