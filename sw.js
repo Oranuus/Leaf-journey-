@@ -3,11 +3,13 @@ const STATIC_ASSETS = [
   './',
   './leaf_journey.html',
   './style.css',
+  './environments.js',
   './game.js',
   './manifest.json',
   './orange leaf.png',
   './green leaf.png',
   './bg1.png',
+  './night.png',
   './bird.png',
   './fork.png',
   './airship.png',
@@ -31,11 +33,10 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-// استراتيجية التحديث التلقائي الذكية (Network First للأكواد / Cache First للصور)
+// استراتيجية التحديث التلقائي الذكية (Network First للأكواد)
 self.addEventListener('fetch', (event) => {
   const reqUrl = new URL(event.request.url);
 
-  // إذا كان الطلب لكود اللعبة (HTML / JS / CSS): جلب الأحدث من الشبكة وتحديث الكاش تلقائياً
   if (reqUrl.pathname.endsWith('.html') || reqUrl.pathname.endsWith('.js') || reqUrl.pathname.endsWith('.css') || event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).then((networkResponse) => {
@@ -44,10 +45,9 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
         }
         return networkResponse;
-      }).catch(() => caches.match(event.request)) // إذا كان أوفلاين استخرج المخزن
+      }).catch(() => caches.match(event.request))
     );
   } else {
-    // للصور والأصوات والخطوط: الاستخراج من الكاش أولاً
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
         return cachedResponse || fetch(event.request).then((networkResponse) => {
