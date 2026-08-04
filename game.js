@@ -1,12 +1,23 @@
 // --- SERVICE WORKER & ORIENTATION ENFORCER ---
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW Registered!', reg))
+    navigator.serviceWorker.register('./sw.js?v=3')
+      .then(reg => {
+        console.log('SW Registered!', reg);
+        reg.update(); // فحص وجود تحديث فوراً
+      })
       .catch(err => console.log('SW Failed!', err));
   });
-}
 
+  // إعادة تحميل الصفحة تلقائياً عند تفعيل الكود الجديد
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
+}
 function forcePortraitAndFullscreen() {
   if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch(() => {});
