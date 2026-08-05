@@ -1,4 +1,4 @@
- const CACHE_NAME = 'leaf-journey-cache-v5';
+ const CACHE_NAME = 'leaf-journey-cache-v6';
 const STATIC_ASSETS = [
   './',
   './leaf_journey.html',
